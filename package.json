@@ -1,0 +1,21 @@
+{
+  "name": "line-predict-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Free-to-play LINE group prediction game with points only (no real money)",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --watch --env-file=.env src/server.js",
+    "start": "node src/server.js",
+    "start:local": "node --env-file=.env src/server.js",
+    "test": "node --test",
+    "db:init": "psql \"$DATABASE_URL\" -f sql/001_init.sql",
+    "admin:add": "node --env-file=.env scripts/add-admin.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}
