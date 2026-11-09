@@ -33,8 +33,18 @@ function sslOption(url) {
 
 export async function migrate() {
   const sql = await readFile(new URL('../sql/001_init.sql', import.meta.url), 'utf8');
-  await getDatabase().query(sql);
-  console.log('Database schema applied');
+  const attempts = Number(process.env.DB_CONNECT_RETRIES ?? 20);
+  for (let i = 1; ; i++) {
+    try {
+      await getDatabase().query(sql);
+      console.log('Database schema applied');
+      return;
+    } catch (error) {
+      if (i >= attempts) throw error;
+      console.warn(`Database not ready (${error.code ?? error.message}); retry ${i}/${attempts} in 5s`);
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+  }
 }
 
 export function getDatabase() {
